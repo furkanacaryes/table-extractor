@@ -1,4 +1,4 @@
-const healthy = require("./extracted.corrupted.json");
+const healthy = require("./extracted.healthy.json");
 const corrupt = require("./extracted.corrupted.json");
 
 // TODO: Merge healthy onto corrupt data
