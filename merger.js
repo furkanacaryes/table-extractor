@@ -12,13 +12,19 @@ const notFound = [];
  */
 const metas = [];
 
+/**
+ * Checks existence in healthy data, then saves separately
+ * if not already existent. It means it belongs to on of late entries.
+ * @param {entry} param0 Entry to check and separate if it qualifies
+ */
 const saveLateMeta = ({ title, ...meta }) => {
   const alreadyExistentMeta = healthyData.find(
-    ({ author, publisher, release }) => {
+    ({ author, publisher, translator, release }) => {
       return (
         author === meta.author &&
         publisher === meta.publisher &&
-        release === meta.release
+        release === meta.release &&
+        translator === meta.translator
       );
     }
   );
@@ -30,6 +36,10 @@ const saveLateMeta = ({ title, ...meta }) => {
   }
 };
 
+/**
+ * Merges healthy data onto corrupt data.
+ * Saves meta prior to overriding if it qualifies.
+ */
 const merge = () => {
   healthyData.forEach((healthy) => {
     const target = corruptData.findIndex(
@@ -54,6 +64,9 @@ const merge = () => {
   );
 };
 
+/**
+ * Saves separated and overridden data persistently.
+ */
 const save = () => {
   fs.writeFileSync("recovered-1600.json", JSON.stringify(corruptData));
   fs.writeFileSync("metas.json", JSON.stringify(metas));
