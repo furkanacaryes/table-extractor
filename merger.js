@@ -3,9 +3,9 @@ const healthyData = require("./extracted.healthy.json");
 const corruptData = require("./extracted.corrupted.json");
 
 /**
- * Used to separate potentially deleted registeries.
+ * Will be used to address the entries to scrape, later in querying.
  */
-const notFound = [];
+const lateEntryIndexes = [];
 
 /**
  * Used to separate overridden meta.
@@ -41,26 +41,32 @@ const saveLateMeta = ({ title, ...meta }) => {
  * Saves meta prior to overriding if it qualifies.
  */
 const merge = () => {
-  healthyData.forEach((healthy) => {
-    const target = corruptData.findIndex(
-      ({ title }) => title === healthy.title
+  corruptData.forEach((corrupt, index) => {
+    const target = healthyData.findIndex(
+      ({ title }) => title === corrupt.title
     );
 
     if (target < 0) {
-      console.log(`[NOT FOUND] Probably deleted. '${healthy.title}'`);
-
-      notFound.push(healthy);
-
-      return;
+      return lateEntryIndexes.push(index);
     }
 
-    saveLateMeta(corruptData[target]);
+    saveLateMeta(corrupt);
 
-    corruptData[target] = healthy;
+    corruptData[index] = healthyData[target];
   });
 
   console.log(
     `${healthyData.length} entries have been overridden as corrected.`
+  );
+
+  console.log(
+    `${
+      corruptData.length - healthyData.length
+    } entries remaining to be corrected.`
+  );
+
+  console.log(
+    `In this matter, ${metas.length} metas have been separated to be queried.`
   );
 };
 
@@ -70,10 +76,7 @@ const merge = () => {
 const save = () => {
   fs.writeFileSync("recovered-1600.json", JSON.stringify(corruptData));
   fs.writeFileSync("metas.json", JSON.stringify(metas));
-
-  if (notFound.length) {
-    fs.writeFileSync("not-found.json", JSON.stringify(notFound));
-  }
+  fs.writeFileSync("lateEntryIndexes.json", JSON.stringify(lateEntryIndexes));
 };
 
 merge();
