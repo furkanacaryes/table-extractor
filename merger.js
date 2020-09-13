@@ -32,11 +32,11 @@ const saveLateMeta = ({ title, ...meta }) => {
 
 const merge = () => {
   healthyData.forEach((healthy) => {
-    const target = corruptData.findIndex((corrupt) =>
-      corrupt.title.match(healthy.title)
+    const target = corruptData.findIndex(
+      ({ title }) => title === healthy.title
     );
 
-    if (!target) {
+    if (target < 0) {
       console.log(`[NOT FOUND] Probably deleted. '${healthy.title}'`);
 
       notFound.push(healthy);
