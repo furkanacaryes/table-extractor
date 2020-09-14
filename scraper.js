@@ -3,7 +3,6 @@ const { JSDOM } = require("jsdom");
 
 const semiRecoveredData = require("./recovered-1600.json");
 const lateEntryIndexes = require("./lateEntryIndexes.json");
-const { info } = require("console");
 
 const errorLog = [];
 
